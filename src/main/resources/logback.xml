@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<!-- <appender name="Console" class="ch.qos.logback.core.ConsoleAppender"> 
+		<layout class="ch.qos.logback.classic.PatternLayout"> <Pattern>%d {%thread} 
+		%-5level %-50logger{40} : %msg%n</Pattern> </layout> </appender> -->
+
+	<appender name="File"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logs/Loginapp.log</file>
+		<encoder
+			class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>%d %p [%t] %C: %msg%n%throwable</Pattern>
+		</encoder>
+
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>logs/archived/Loginapp-%d{yyyy-MM-dd}.%i.log
+			</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>10MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<!-- keep 30 days' worth of history capped at 3GB total size -->
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>3GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="customlogger"
+			class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>logs/customlogger.log</file>
+			<encoder
+				class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<Pattern>%d %p [%t] %C: %msg%n%throwable</Pattern>
+			</encoder>
+	
+			<rollingPolicy
+				class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>logs/archived/customprocess-%d{yyyy-MM-dd}.%i.log
+				</fileNamePattern>
+				<timeBasedFileNamingAndTriggeringPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+					<maxFileSize>10MB</maxFileSize>
+				</timeBasedFileNamingAndTriggeringPolicy>
+				<!-- keep 30 days' worth of history capped at 3GB total size -->
+				<maxHistory>30</maxHistory>
+				<totalSizeCap>3GB</totalSizeCap>
+			</rollingPolicy>
+		</appender>
+	
+	<root level="INFO">
+		<appender-ref ref="File" />	
+		<!-- <appender-ref ref="Console" /> -->
+	</root>
+	<root level="WARN" additivity="false">
+		<appender-ref ref="customlogger" />
+	</root>
+
+
+	<logger name="com.xoriant" level="DEBUG" additivity="false">
+		<appender-ref ref="File" />
+		<!-- <appender-ref ref="Console" /> -->
+	</logger>
+	<!-- <logger name="customappender" level="INFO" additivity="false">
+		<appender-ref ref="INFO" />
+		<appender-ref ref="Console" />
+	</logger> -->
+
+</configuration>

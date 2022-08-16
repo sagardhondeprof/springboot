@@ -1,0 +1,9 @@
+#class_files
+*.class
+#target
+/target/
+.classpath
+.project
+.settings/
+*.db
+*.log
