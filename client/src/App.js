@@ -8,6 +8,7 @@ import SignUp from './components/SignUp';
 import EmployeeDetail from './components/EmployeeDetail';
 import BasicDetails from './components/BasicDetails';
 import EmployeeEducation from './components/EmployeeEducation';
+import AddRole from './components/AddRole';
 
 function App() {
 
@@ -26,10 +27,12 @@ function App() {
           <Route path="/employeedetail" element={<EmployeeDetail />} />
           <Route path="/employeeform" element={<EmployeeEducation/>} />
           <Route path="/basicdetails" element={<BasicDetails/>} />
+          <Route path="/addrole" element={<AddRole/>} />
+          <Route path='/signup' element={<SignUp />}/>
         </Route>
         <Route path="/" element={<SignIn />}></Route>
         {/* <Route path ='/dashboard' element ={<DashboardContent/>}></Route> */}
-        <Route path='/signup' element={<SignUp />}></Route>
+        
 
       </Routes>
     </div>

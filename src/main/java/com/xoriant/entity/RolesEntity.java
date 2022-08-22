@@ -27,10 +27,14 @@ public class RolesEntity extends AuditEntity {
 
 	@Column(name = "rolename")
 	private String roleName;
+	
+	@Column(name = "description")
+	private String description;
 
 	public RolesEntity(String createdBy, LocalDateTime createdDate, String lastUpdatedBy, LocalDateTime lastUpdateDate,
-			String roleName) {
+			String roleName,String description) {
 		super(createdBy, createdDate, lastUpdatedBy, lastUpdateDate);
 		this.roleName = roleName;
+		this.description=description;
 	}
 }

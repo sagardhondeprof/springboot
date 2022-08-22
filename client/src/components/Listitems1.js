@@ -8,6 +8,7 @@ import LayersIcon from "@mui/icons-material/Layers";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import { useNavigate } from "react-router-dom";
 import SchoolIcon from '@mui/icons-material/School';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 export default function Listitems1({ roles }) {
@@ -35,6 +36,9 @@ export default function Listitems1({ roles }) {
       case "/basicdetails":
         setSelectedIndex(4);
         break;
+        case "/addrole":
+          setSelectedIndex(6);
+          break;
       default:
         break;
     }
@@ -56,7 +60,7 @@ export default function Listitems1({ roles }) {
         <ListItemIcon>
           <ListAltIcon />
         </ListItemIcon>
-        <ListItemText primary="Tab 1" />
+        <ListItemText primary="" />
       </ListItemButton>
       <ListItemButton
         onClick={() => navigate("/employeedetail", { state: { roles: role } })}
@@ -65,7 +69,7 @@ export default function Listitems1({ roles }) {
         <ListItemIcon>
           <BarChartIcon />
         </ListItemIcon>
-        <ListItemText primary="Tab 2" />
+        <ListItemText primary="Employee Details" />
       </ListItemButton>
       <ListItemButton  selected={selectedIndex === 3}>
         <ListItemIcon>
@@ -87,6 +91,13 @@ export default function Listitems1({ roles }) {
           <ListItemText primary="Tab 3" />
         </ListItemButton>
       )}
+      <ListItemButton selected={selectedIndex === 6}  onClick={() => navigate("/addrole", { state: { roles: role } })}
+        >
+        <ListItemIcon>
+          <GroupAddIcon/>
+        </ListItemIcon>
+        <ListItemText primary="Add Role" />
+      </ListItemButton>
     </React.Fragment>
   );
 }

@@ -13,7 +13,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RolesPOJO {
 
+	private int id;
 	@NotNull
 	private String roleName;
+	private String description;
 
 }

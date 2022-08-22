@@ -36,6 +36,9 @@ export default function SettingsMenu() {
       
     }
   }
+  const handleAddRole =() =>{
+    navigate("/addrole")
+  }
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -63,6 +66,7 @@ export default function SettingsMenu() {
       >
         <MenuItem onClick={() => navigate('/signup')} >Add User</MenuItem>
         <MenuItem onClick={handleLogout} >Logout</MenuItem>
+        <MenuItem onClick={handleAddRole} >Add Role</MenuItem>
         {/* <MenuItem onClick={handleClose}>My account</MenuItem>
         <MenuItem onClick={handleClose}>Logout</MenuItem> */}
       </Menu>
