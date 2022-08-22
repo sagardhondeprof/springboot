@@ -46,7 +46,7 @@ public class AuthenticationController {
 //		JWTBlacklist.balcklistedTokensMap.put(username, token);
 //		return new ResponseEntity<>("logged out", HttpStatus.OK);
 //	}
-	@PutMapping("logout")
+	@GetMapping("logout")
 	public ResponseEntity<Object> userLogout(HttpServletRequest request) {
 		log.debug("inside logout");
 		authenticateService.blacklistToken(request);

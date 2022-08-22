@@ -8,7 +8,7 @@ import AddDialog from './AddDialog';
 import CustomSnackbar from './CustomSnackbar';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import CustomExport from './CustomExport';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import EmployeeActionsMenu from './EmployeeActionsMenu';
 
 const DATA_LIST_URL = "http://localhost:8080/";
@@ -17,6 +17,7 @@ const initialValue = { firstName: "", lastName: "", email: "", date: "" }
 
 export default function DataTable() {
   const location = useLocation();
+  let navigate = useNavigate();
 
   const [data, setData] = React.useState("");
   const [open1, setOpen1] = React.useState(false);
@@ -127,12 +128,17 @@ export default function DataTable() {
               refetch();
             }
           }).catch((error) => {
+            if(error.response.status === 401){
+              navigate("/");
+            }
+            else{
             console.log("hi")
             console.log(error)
             setSopen(true);
             setSmessage("Not able to Update");
             setSerror("error");
             handleClose();
+            }
           })
         setFormData(initialValue);
       }
@@ -153,11 +159,16 @@ export default function DataTable() {
               refetch();
             }
           }).catch((error) => {
+            if(error.response.status === 401){
+              navigate("/");
+            }
+            else{
             console.log(error)
             setSopen(true);
             setSmessage("Not able to Add");
             setSerror("error");
             handleClose();
+            }
           })
 
         setFormData(initialValue);
@@ -192,10 +203,15 @@ export default function DataTable() {
     })
       .then(resp => console.log(resp))
       .catch((error) => {
+        if(error.response.status === 401){
+          navigate("/");
+        }
+        else{
         console.log(error)
         setSopen(true);
         setSmessage("Not able to Delete");
         setSerror("error");
+        }
       })
 
     setData(data.filter(data => data.id !== id));
@@ -217,7 +233,7 @@ export default function DataTable() {
 
   React.useEffect(()=>{
     //console.log(location.state.roles,"ssss")
-    setrole(location.state.roles) 
+    setrole(location.state?.roles) 
   },[role])
 
   const fetchData = async () => {
@@ -229,15 +245,19 @@ export default function DataTable() {
           Authorization: JSON.parse(lt)
         }
       })
-      //console.log(response.data);
+      //console.log(response);
       setData(response.data.content)
       setTotal(response.data.totalElements);
       setIsLoading(false);
     } catch (error) {
-      console.log(error)
+      if(error.response.status === 401){
+        navigate("/");
+      }
+      else{
       setSopen(true);
       setSmessage("Not able to Fetch Data");
       setSerror("error");
+      }
     }
   }
 
@@ -257,10 +277,15 @@ export default function DataTable() {
       console.log(response);
       setData(response.data)
     } catch (error) {
+      if(error.response.status === 401){
+        navigate("/");
+      }
+      else{
       console.log(error)
       setSopen(true);
       setSmessage("Data Not Found");
       setSerror("error");
+      }
     }
   }
 

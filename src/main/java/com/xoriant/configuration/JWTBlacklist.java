@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.xoriant.util.JwtUtil;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -23,7 +24,18 @@ public class JWTBlacklist {
 
 	@Scheduled(cron = "${blacklist.tokens.cleanup.schedule}")
 	public void expiredTokenCleanUp() {
-		balcklistedTokensMap.entrySet().removeIf(entry -> jwtUtil.isTokenExpired(entry.getKey()));
+//		balcklistedTokensMap.entrySet().removeIf(entry -> jwtUtil.isTokenExpired(entry.getKey()));
 		log.info("BlacklistedTokens cleanup scheduler run !");
+		String currentToken = null;
+		for (String key : balcklistedTokensMap.keySet()) {
+			try {
+				currentToken = key;
+				jwtUtil.isTokenExpired(currentToken);
+			} catch (ExpiredJwtException e) {
+				balcklistedTokensMap.remove(currentToken);
+				log.info("expired token removed from blacklist");
+			}
+		}
+
 	}
 }

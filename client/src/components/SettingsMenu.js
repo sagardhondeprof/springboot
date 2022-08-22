@@ -15,23 +15,22 @@ export default function SettingsMenu() {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleLogout =async ()=>{
+  const handleLogout = async () => {
 
-    let tocken = localStorage.getItem("accessToken");
+    //let tocken = localStorage.getItem("accessToken");
 
     try {
       let lt = localStorage.getItem("accessToken");
-      
-      const response = await axios.put(DATA_LIST_URL + 'authenticate/logout' , {
+      const response = await axios.get(DATA_LIST_URL + 'authenticate/logout' ,{
         headers: {
           Authorization: JSON.parse(lt)
         }
       })
       
-      
-        localStorage.clear()
+      if(response.status === 200){
+        //localStorage.clear()
         navigate("/")
-      
+      }
     } catch (error) {
       console.log(error)
       

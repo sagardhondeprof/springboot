@@ -30,6 +30,8 @@ public class RbacRequestFilter extends OncePerRequestFilter {
 
 	@Autowired
 	private AuthenticateService authenticateService;
+	
+	@Autowired LoginSession loginSession;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -48,6 +50,7 @@ public class RbacRequestFilter extends OncePerRequestFilter {
 			} catch (IllegalArgumentException e) {
 				log.info("Unable to get JWT Token");
 			} catch (ExpiredJwtException e) {
+				loginSession.getUsernameMap().values().remove(jwtToken);
 				log.info("JWT Token has expired");
 			}
 		} else {
@@ -62,7 +65,10 @@ public class RbacRequestFilter extends OncePerRequestFilter {
 
 			// if token is valid configure Spring Security to manually set
 			// authentication
-			if (jwtUtil.validateToken(jwtToken, userDetails)) {
+			//System.out.println(JWTBlacklist.balcklistedTokensMap.containsKey(jwtToken));
+			if (jwtUtil.validateToken(jwtToken, userDetails)
+					&& !JWTBlacklist.balcklistedTokensMap.containsKey(jwtToken)) {
+				
 
 				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
 						userDetails, null, userDetails.getAuthorities());
