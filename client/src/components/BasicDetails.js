@@ -5,7 +5,7 @@ import {
 } from "@mui/material";
 
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import Select from "react-select";
@@ -25,6 +25,7 @@ const ADD_BASIC_DETAILS = "http://localhost:8080/basicdetails";
 const GET_BASIC_DETAILS = "http://localhost:8080/getbasicdetails/";
 
 export default function BasicDetails() {
+  let navigate = useNavigate();
   let location = useLocation();
   const [data, setdata] = useState({});
   const [date, setDate] = React.useState(new Date().toISOString().slice(0, 10));
@@ -144,8 +145,13 @@ export default function BasicDetails() {
         }
         setimage(`data:image/jpeg;base64,${response.data.profile}`)
       }
-    } catch (e) {
-      console.log(e)
+    } catch (error) {
+      if(error.response.status === 401){
+        navigate("/");
+      }
+      else{
+      console.log(error)
+      }
     }
   }
 

@@ -12,6 +12,8 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
 import axios from "axios";
+import CustomSnackbar from "./CustomSnackbar";
+import SignInAlert from "./SignInAlert";
 
 const theme = createTheme();
 
@@ -20,6 +22,9 @@ export default function SignIn() {
   const [userPassword, setuserPassword] = useState("");
   const [userNameError, setuserNameError] = useState(false);
   const [userPasswordError, setuserPasswordError] = useState(false);
+  const [sopen, setSopen] = React.useState(false);
+  const [smessage, setSmessage] = React.useState("");
+  const [serror, setSerror] = React.useState("");
 
   let navigate = useNavigate();
 
@@ -28,6 +33,14 @@ export default function SignIn() {
   //     ? setuserNameError(true)
   //     : setuserNameError(false);
   // }, [userName]);
+
+  const handleSclose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setSopen(false);
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -54,6 +67,13 @@ export default function SignIn() {
       axios
         .post("http://localhost:8080/authenticate", data)
         .then((response) => {
+          if(response.data.jwtToken === "already loggged in"){
+            console.log("already loggged in")
+            setSopen(true)
+            setSerror("error")
+            setSmessage("User already logged in! Logout from previous session to login here")
+          }
+          else{
           // if (response.status === 200) {
           //console.log(response.data, " response");
           localStorage.setItem(
@@ -63,14 +83,17 @@ export default function SignIn() {
           //console.log(response.data.roles);
           navigate("/datatable", {state:{roles:response.data.roles}});
           // }
+          }
+          
         })
         .catch((error) => {
-          console.error();
+          console.error(error);
         });
     }
   };
 
   return (
+    <>
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -164,7 +187,10 @@ export default function SignIn() {
             </Grid>
           </Box>
         </Box>
+        
       </Container>
     </ThemeProvider>
+    <CustomSnackbar message={smessage} severity={serror} sopen={sopen} onClose={handleSclose} />
+    </>
   );
 }

@@ -1,5 +1,6 @@
 package com.xoriant.service;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.xoriant.configuration.JWTBlacklist;
+import com.xoriant.configuration.LoginSession;
 import com.xoriant.entity.AccessMappingEntity;
 import com.xoriant.entity.UserEntity;
 import com.xoriant.pojo.AuthenticatePOJO;
@@ -25,6 +27,7 @@ import com.xoriant.pojo.AuthenticationResponsePOJO;
 import com.xoriant.repository.UserRepository;
 import com.xoriant.util.JwtUtil;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -39,6 +42,9 @@ public class AuthenticateService implements UserDetailsService {
 
 	@Autowired
 	private UserRepository userDao;
+	
+	@Autowired
+	private LoginSession loginSession;
 
 	public AuthenticationResponsePOJO authenticateUser(AuthenticatePOJO request) throws Exception {
 		String userName = request.getUserName();
@@ -55,9 +61,25 @@ public class AuthenticateService implements UserDetailsService {
 		}
 		String token = jwtUtil.generateToken(authentication);
 		UserEntity authenticatedUser = userDao.findByUserName(userName);
+		
 		AuthenticationResponsePOJO response = new AuthenticationResponsePOJO(token,
 				getRoles(authenticatedUser.getRoleMapping()));
+		if(!loginSession.getUsernameMap().containsKey(userName)) {
+		loginSession.getUsernameMap().put(userName, token);
 		return response;
+		}
+		else {
+			AuthenticationResponsePOJO response1 = new AuthenticationResponsePOJO("already loggged in",
+					null);
+			return response1;
+		}
+//		loginSession.getTokenMap().put(token, true);
+//		String username = jwtUtil.getUsernameFromToken(token);
+//		if(loginSession.getUsernameMap().containsKey(username)) {
+//			JWTBlacklist.balcklistedTokensMap.put(loginSession.getUsernameMap().get(username), username);
+//		}
+//		loginSession.getUsernameMap().put(username, token);
+		//return response;
 	}
 
 	public void authenticate(String userName, String userPassword) throws Exception {
@@ -92,7 +114,7 @@ public class AuthenticateService implements UserDetailsService {
 	public String[] getRoles(Set<AccessMappingEntity> role) {
 		return role.stream().map(mapper -> mapper.getRole().getRoleName()).toArray(String[]::new);
 	}
-
+	
 	public void blacklistToken(HttpServletRequest request) {
 		log.debug("start blacklistToken() method");
 		final String requestTokenHeader = request.getHeader("Authorization");
@@ -100,10 +122,20 @@ public class AuthenticateService implements UserDetailsService {
 		String jwtToken = null;
 		if (null != requestTokenHeader) {
 			jwtToken = requestTokenHeader.substring(11);
-			username = jwtUtil.getUsernameFromToken(jwtToken);
+			try {
+				if(!jwtUtil.isTokenExpired(jwtToken)) {
+					username = jwtUtil.getUsernameFromToken(jwtToken);
+			}
+			}catch(ExpiredJwtException e) {
+				//loginSession.getUsernameMap().entrySet().removeIf(entry -> jwtUtil.isTokenExpired(entry.getValue()));
+				loginSession.getUsernameMap().values().remove(jwtToken);
+			}
 		}
 		JWTBlacklist.balcklistedTokensMap.put(jwtToken, username);
-
+		if(loginSession.getUsernameMap().containsKey(username)) {
+			loginSession.getUsernameMap().remove(username);
+		}
 		log.debug("end blacklistToken() method");
-	}
+	} 
+	
 }
