@@ -1,7 +1,10 @@
 package com.xoriant.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
@@ -10,23 +13,30 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.xoriant.entity.RoleAccessMapping;
 import com.xoriant.entity.EmployeeEntity;
 import com.xoriant.entity.RolesEntity;
+import com.xoriant.entity.ScreenDetailEntity;
 import com.xoriant.pojo.EmployeePOJO;
 import com.xoriant.pojo.RolesPOJO;
 import com.xoriant.repository.RolesRepository;
+import com.xoriant.repository.ScreenDetailRepository;
 
 @Service
 public class RolesService {
 
 	@Autowired
 	private RolesRepository rolesRepository;
+	
+	@Autowired 
+	private ScreenDetailRepository screenDetailRepository;
 
 	@Autowired
 	private ModelMapper modelMapper;
 
 	public RolesPOJO addroles(RolesPOJO roles) {
 		Optional<RolesEntity> roleEntity = rolesRepository.findByRoleName(roles.getRoleName());
+		//RolesEntity roleEntity1 = rolesRepository.findByRoleName(roles.getRoleName()).get();
 		if (roleEntity.isPresent()) {
 			RolesEntity roleentity = roleEntity.get();
 			RolesPOJO response = mapToPojo(roleentity);
@@ -35,6 +45,42 @@ public class RolesService {
 			String loggeduser = userName();
 			RolesEntity addrole = new RolesEntity(loggeduser, LocalDateTime.now(), loggeduser, LocalDateTime.now(),
 					roles.getRoleName(),roles.getDescription());
+			
+			List<RoleAccessMapping> list1 = new ArrayList<>();
+			HashMap<String, String> accessMapping = roles.getAccessMapping();
+			
+			for(Map.Entry<String, String> entry : accessMapping.entrySet()) {
+				ScreenDetailEntity screen = screenDetailRepository.findByAccessName(entry.getKey());
+				RoleAccessMapping obj = new RoleAccessMapping();
+				obj.setRoleentity(addrole);
+				obj.setScreenDetailEntity(screen);
+				if(entry.getValue().contains("write")) {
+					if(entry.getValue().contains("true")) {
+						obj.setRead(true);
+						obj.setWrite(true);
+					}
+				}
+				if(entry.getValue().contains("read")) {
+					if(entry.getValue().contains("true")) {
+						obj.setRead(true);
+					}
+				}
+				list1.add(obj);
+			}
+			
+//			ScreenDetailEntity sc = screenDetailRepository.findById(100L).get();
+//			RoleAccessMapping a1 = new RoleAccessMapping();
+//			a1.setRoleentity(addrole);
+//			a1.setScreenDetailEntity(sc);
+//			RoleAccessMapping a2 = new RoleAccessMapping();
+//			a2.setRoleentity(addrole);
+//			a2.setScreenDetailEntity(sc);
+//			List<RoleAccessMapping> list = new ArrayList<>();
+//			list.add(a1);
+//			list.add(a2);
+			
+			//sc.setRoleAccessMappings(list);
+			addrole.setAccessControl(list1);
 			RolesEntity roleentity = rolesRepository.save(addrole);
 			RolesPOJO response = mapToPojo(roleentity);
 			return response;
@@ -69,5 +115,10 @@ public class RolesService {
 		RolesEntity roleEntity2 = rolesRepository.save(roleEntity);
 		RolesPOJO responseEntity = mapToPojo(roleEntity2);
 		return responseEntity;
+	}
+
+	public List<ScreenDetailEntity> getAccessList() {
+		List<ScreenDetailEntity> list = screenDetailRepository.findAll();
+		return list;
 	}
 }

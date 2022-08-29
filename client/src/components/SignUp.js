@@ -21,6 +21,7 @@ import {
 } from "@mui/material";
 
 const ADD_USER = "http://localhost:8080/registration/adduser";
+const ROLES_LIST_URL = "http://localhost:8080/roles/getroles";
 
 const theme = createTheme();
 const ITEM_HEIGHT = 48;
@@ -43,14 +44,14 @@ function getStyles(name, personName, theme) {
 }
 
 export default function SignUp() {
-  const userRoles = ["Admin", "Developer", "User"];
+  //const userRoles = ["Admin", "Developer", "User"];
   const [displayName, setDisplayName] = useState("");
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [roles, setRoles] = useState([]);
-
+  const [roledata, setroledata] = useState([]);
   const [isSubmit, setIsSubmit] = useState(false);
   const [formErrors, setFormErrors] = useState({});
 
@@ -132,6 +133,27 @@ export default function SignUp() {
     );
   };
 
+  const fectRoles = async() => {
+    try{
+      let lt = localStorage.getItem("accessToken");
+    const response = await axios.get(ROLES_LIST_URL, {
+      headers: {
+        Authorization: JSON.parse(lt),
+      },
+    });
+    setroledata(response.data);
+    if((await response).status === 202){
+      setroledata(response.data.map((item) => item.roleName))
+    }
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  React.useEffect(() => {
+    fectRoles();
+  },[])
+  
   return (
     <ThemeProvider theme={theme}>
       <div>
@@ -250,7 +272,7 @@ export default function SignUp() {
                     input={<OutlinedInput label="Roles" />}
                     MenuProps={MenuProps}
                   >
-                    {userRoles.map((name) => (
+                    {roledata.map((name) => (
                       <MenuItem
                         key={name}
                         value={name}

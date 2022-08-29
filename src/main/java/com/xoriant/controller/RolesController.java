@@ -41,4 +41,9 @@ public class RolesController {
 		
 		return new ResponseEntity<>(rolesService.updateRole(id,role), HttpStatus.ACCEPTED);
 	}
+	
+	@GetMapping("getaccesslist")
+	public ResponseEntity<?> getAccessList(){
+		return new ResponseEntity<>(rolesService.getAccessList(), HttpStatus.ACCEPTED);
+	}
 }

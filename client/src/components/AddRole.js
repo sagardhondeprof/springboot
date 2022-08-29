@@ -21,9 +21,21 @@ const initialValues = {
   roleName: "",
   description: "",
 };
+const accessinitial = {};
+
 export default function BasicTable() {
   const [roles, setroles] = React.useState([]);
   const [roleFormData, setroleFormData] = React.useState(initialValues);
+  const [accessMapping, setaccessMapping] = React.useState(accessinitial);
+
+  const handleAccessChange = (event) => {
+    console.log(event.target.name,event.target.checked,event.target.id)
+    setaccessMapping({
+      ...accessMapping,
+      [event.target.name]:event.target.id+'_'+event.target.checked
+    })
+    // setroleFormData({ ...roleFormData, accessMapping })
+  }
 
   const fetchRoles = async () => {
     let lt = localStorage.getItem("accessToken");
@@ -32,80 +44,91 @@ export default function BasicTable() {
         Authorization: JSON.parse(lt),
       },
     });
-    console.log(response.data);
     setroles(response.data);
   };
+
   React.useEffect(() => {
     fetchRoles();
   }, []);
 
+  React.useEffect(() => {
+    setroleFormData({ ...roleFormData, accessMapping })
+  }, [accessMapping])
+  
+
   const [addDialog, setAddDialog] = React.useState(false);
   const handleDelete = async (id) => {
     let lt = localStorage.getItem("accessToken");
-    const response = await axios.delete(DELETE_ROLE_URL+ id, {
+    const response = await axios.delete(DELETE_ROLE_URL + id, {
       headers: {
         Authorization: JSON.parse(lt)
       }
     })
-    if( response.status === 202)
-    {
+    if (response.status === 202) {
       fetchRoles();
     }
   };
+
   const handleUpdate = (role) => {
-    const {createdBy,createdDate,lastUpdateDate,lastUpdatedBy,...newRole} = role
+    const { createdBy, createdDate, lastUpdateDate, lastUpdatedBy, accessControl, ...newRole } = role
     setroleFormData(newRole)
     setAddDialog(true);
     console.log(newRole);
 
   };
+
   const handleClickOpen = () => {
     setAddDialog(true);
   };
+
   const handleClose = () => {
     setAddDialog(false);
     setroleFormData(initialValues)
+    setaccessMapping(accessinitial);
   };
+
   const onChange = (e) => {
     console.log(e.target.id);
     const { value, id } = e.target;
     setroleFormData({ ...roleFormData, [id]: value });
   };
+
   const handleSubmit = async (event) => {
+    console.log(accessMapping)
+    //setroleFormData({ ...roleFormData, accessMapping })
     event.preventDefault();
-    if(roleFormData.id)
-    {
+    if (roleFormData.id) {
       let lt = localStorage.getItem("accessToken");
-      const response = axios.put(UPDATE_ROLE_URL+roleFormData.id, roleFormData, {
+      const response = axios.put(UPDATE_ROLE_URL + roleFormData.id, roleFormData, {
         headers: {
           Authorization: JSON.parse(lt),
         },
       });
       console.log(response)
-      if((await response).status === 202){
+      if ((await response).status === 202) {
         fetchRoles();
       }
       setroleFormData(initialValues);
       handleClose()
-    }else{
-
-    console.log(roleFormData);
-    let lt = localStorage.getItem("accessToken");
-    const response = axios.post(ADD_ROLES_URL, roleFormData, {
-      headers: {
-        Authorization: JSON.parse(lt),
-      },
-    });
-    console.log(response);
-    handleClose();
-    if ((await response).status === 201) {
-      fetchRoles(); 
+    } else {
+      console.log(roleFormData);
+      let lt = localStorage.getItem("accessToken");
+      const response = axios.post(ADD_ROLES_URL, roleFormData, {
+        headers: {
+          Authorization: JSON.parse(lt),
+        },
+      });
+      console.log(response);
+      handleClose();
+      if ((await response).status === 201) {
+        fetchRoles();
+      }
+      setroleFormData(initialValues);
+      setaccessMapping(accessinitial);
     }
-    setroleFormData(initialValues);
-  }
 
   }
-  ;
+
   return (
     <>
       <Box
@@ -118,14 +141,13 @@ export default function BasicTable() {
       >
         <Toolbar />
 
-        {/* Add Role Dialog */}
-
         <AddRoleDialog
           addDialog={addDialog}
           handleClose={handleClose}
-          data={ roleFormData }
+          data={roleFormData}
           onChange={onChange}
           handleFormSubmit={handleSubmit}
+          handleAccessChange={handleAccessChange}
         />
 
         <div style={{ float: "right", padding: "15px" }}>
@@ -177,8 +199,6 @@ export default function BasicTable() {
                   <TableCell align="left" sx={{ fontWeight: "bold" }}>
                     {role.lastUpdatedBy}
                   </TableCell>
-                  
-                  
                   <TableCell align="left">
                     <IconButton onClick={() => handleDelete(role.id)}>
                       <DeleteIcon />
