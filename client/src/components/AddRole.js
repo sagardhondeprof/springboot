@@ -20,6 +20,9 @@ const UPDATE_ROLE_URL = "http://localhost:8080/roles/updaterole/";
 const initialValues = {
   roleName: "",
   description: "",
+  accessMapping : {
+    
+  }
 };
 const accessinitial = {};
 
@@ -159,15 +162,15 @@ export default function BasicTable() {
         <TableContainer component={Paper} sx={{ padding: "10px" }}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead sx={{ backgroundColor: "#f4bbff" }}>
-              <TableRow>
-                <TableCell>Role ID</TableCell>
-                <TableCell>Role Name</TableCell>
-                <TableCell>Description</TableCell>
-                <TableCell>createdBy</TableCell>
+              <TableRow >
+                <TableCell sx={{ fontWeight: "bold" }}>Role ID</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Role Name</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Description</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>createdBy</TableCell>
                 {/* <TableCell>createdDate</TableCell>
                 <TableCell>lastUpdateDate</TableCell> */}
-                <TableCell>lastUpdatedBy</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>lastUpdatedBy</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -180,14 +183,14 @@ export default function BasicTable() {
                   }}
                   hover="true"
                 >
-                  <TableCell align="left" sx={{ fontWeight: "bold" }}>
+                  <TableCell align="left" >
                     {role.id}
                   </TableCell>
-                  <TableCell align="left" sx={{ fontWeight: "bold" }}>
+                  <TableCell align="left" >
                     {role.roleName}
                   </TableCell>
                   <TableCell align="left">{role.description}</TableCell>
-                  <TableCell align="left" sx={{ fontWeight: "bold" }}>
+                  <TableCell align="left" >
                     {role.createdBy}
                   </TableCell>
                   {/* <TableCell align="left" sx={{ fontWeight: "bold" }}>
@@ -196,7 +199,7 @@ export default function BasicTable() {
                   <TableCell align="left" sx={{ fontWeight: "bold" }}>
                     {role.lastUpdateDate}
                   </TableCell> */}
-                  <TableCell align="left" sx={{ fontWeight: "bold" }}>
+                  <TableCell align="left" >
                     {role.lastUpdatedBy}
                   </TableCell>
                   <TableCell align="left">

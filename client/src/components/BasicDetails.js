@@ -28,6 +28,7 @@ export default function BasicDetails() {
   let navigate = useNavigate();
   let location = useLocation();
   const [data, setdata] = useState({});
+  const [roles, setroles] = useState([]);
   const [date, setDate] = React.useState(new Date().toISOString().slice(0, 10));
   const [nation, setNation] = useState("");
   const [fgender, setFgender] = useState("female");
@@ -156,6 +157,7 @@ export default function BasicDetails() {
   }
 
   useEffect(() => {
+    setroles(location.state.roles);
     setdata(location.state.data);
     setFormData({ ...formData, empId: location.state.data.id })
     getBasicDetails();
@@ -398,6 +400,7 @@ export default function BasicDetails() {
             type="submit"
             variant="contained"
             sx={{ mt: 5, ml: 50, width: "200px" }}
+            disabled={!roles.includes("Admin") ? true : false}
           >
             Submit
           </Button>

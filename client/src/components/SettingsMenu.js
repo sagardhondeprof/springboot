@@ -3,15 +3,23 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { IconButton } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const DATA_LIST_URL = "http://localhost:8080/";
 
 export default function SettingsMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [roles, setroles] = React.useState([]);
+
   const open = Boolean(anchorEl);
+  let location = useLocation();
+
+  React.useEffect(() => {
+    setroles(location.state.roles);
+  }, [roles])
   
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -37,7 +45,7 @@ export default function SettingsMenu() {
     }
   }
   const handleAddRole =() =>{
-    navigate("/addrole")
+    navigate("/addrole",{state : {roles : roles}})
   }
   const handleClose = () => {
     setAnchorEl(null);
@@ -64,9 +72,12 @@ export default function SettingsMenu() {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={() => navigate('/signup')} >Add User</MenuItem>
+        {/* {roles.includes("Admin") && ( */}
+        <MenuItem onClick={() => navigate('/signup',{state : {roles : roles}})} >Add User</MenuItem>
+        {/* )} */}
         <MenuItem onClick={handleLogout} >Logout</MenuItem>
-        <MenuItem onClick={handleAddRole} >Add Role</MenuItem>
+        {roles.includes("Admin") && (
+        <MenuItem onClick={handleAddRole} >Add Role</MenuItem>)}
         {/* <MenuItem onClick={handleClose}>My account</MenuItem>
         <MenuItem onClick={handleClose}>Logout</MenuItem> */}
       </Menu>
