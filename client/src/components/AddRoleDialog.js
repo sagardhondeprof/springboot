@@ -4,7 +4,17 @@ import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import { Grid, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import {
+  Grid,
+  Paper,
+  Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import axios from "axios";
 const ACCESS_LIST_URL = "http://localhost:8080/roles/getaccesslist";
 
@@ -16,10 +26,9 @@ export default function AddRoleDialog({
   data,
   error,
   handleAccessChange,
-
+  roleError,
 }) {
   const [screendata, setScreendata] = React.useState([]);
-
 
   const fetchAccessNames = async () => {
     let lt = localStorage.getItem("accessToken");
@@ -28,13 +37,12 @@ export default function AddRoleDialog({
         Authorization: JSON.parse(lt),
       },
     });
-    console.log(response.data)
     setScreendata(response.data);
-  }
+  };
 
   React.useEffect(() => {
     fetchAccessNames();
-  }, [])
+  }, []);
 
   return (
     <div>
@@ -55,6 +63,7 @@ export default function AddRoleDialog({
                   value={data.roleName}
                   onChange={(e) => onChange(e)}
                 />
+                <p style={{ color: "red" }}>{roleError}</p>
               </Grid>
               <Grid item xs={6}>
                 <TextField
@@ -70,31 +79,51 @@ export default function AddRoleDialog({
                 />
               </Grid>
             </Grid>
-            <TableContainer component={Paper} style={{ 'padding': '5px ' }}>
-              <Table sx={{ minWidth: 100 }} size="small" aria-label="custom pagination table" >
+            <TableContainer component={Paper} style={{ padding: "5px " }}>
+              <Table
+                sx={{ minWidth: 100 }}
+                size="small"
+                aria-label="custom pagination table"
+              >
                 <TableHead>
                   <TableRow>
-                    <TableCell style={{ 'fontWeight': 'bold' }}>Screen Name</TableCell>
-                    <TableCell align="left" style={{ 'fontWeight': 'bold' }}>Read</TableCell>
-                    <TableCell align="left" style={{ 'fontWeight': 'bold' }}>Write</TableCell>
+                    <TableCell style={{ fontWeight: "bold" }}>
+                      Screen Name
+                    </TableCell>
+                    <TableCell align="left" style={{ fontWeight: "bold" }}>
+                      Read
+                    </TableCell>
+                    <TableCell align="left" style={{ fontWeight: "bold" }}>
+                      Write
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {screendata.map((row) => (
                     <TableRow
                       key={row.accessName}
-                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
                       <TableCell component="th" scope="row">
                         {row.accessName}
                       </TableCell>
                       <TableCell>
-                        <Switch defaultUnchecked color="secondary" onChange={handleAccessChange}
-                          name={row.accessName} id='read' />
+                        <Switch
+                          defaultUnchecked
+                          color="secondary"
+                          onChange={handleAccessChange}
+                          name={row.accessName}
+                          id="read"
+                        />
                       </TableCell>
                       <TableCell>
-                        <Switch defaultUnchecked color="secondary" onChange={handleAccessChange}
-                          name={row.accessName} id='write' />
+                        <Switch
+                          defaultUnchecked
+                          color="secondary"
+                          onChange={handleAccessChange}
+                          name={row.accessName}
+                          id="write"
+                        />
                       </TableCell>
                     </TableRow>
                   ))}

@@ -1,17 +1,16 @@
-import React from 'react';
-import { Routes, Route, Outlet } from 'react-router-dom';
-import './App.css';
-import DataTable from './components/Datatable';
-import Drawer1 from './components/Drawer';
-import SignIn from './components/SignIn';
-import SignUp from './components/SignUp';
-import EmployeeDetail from './components/EmployeeDetail';
-import BasicDetails from './components/BasicDetails';
-import EmployeeEducation from './components/EmployeeEducation';
-import AddRole from './components/AddRole';
+import React from "react";
+import { Routes, Route, Outlet } from "react-router-dom";
+import "./App.css";
+import DataTable from "./components/Datatable";
+import Drawer1 from "./components/Drawer";
+import SignIn from "./components/SignIn";
+import AddUser from "./components/AddUser";
+import EmployeeDetail from "./components/EmployeeDetail";
+import BasicDetails from "./components/BasicDetails";
+import EmployeeEducation from "./components/EmployeeEducation";
+import AddRole from "./components/AddRole";
 
 function App() {
-
   const SidebarLayout = () => (
     <>
       <Drawer1 />
@@ -20,20 +19,17 @@ function App() {
   );
 
   return (
-    <div className="App" style={{display: 'flex'}}>
+    <div className="App" style={{ display: "flex" }}>
       <Routes>
         <Route element={<SidebarLayout />}>
           <Route path="/datatable" element={<DataTable />} />
           <Route path="/employeedetail" element={<EmployeeDetail />} />
-          <Route path="/employeeform" element={<EmployeeEducation/>} />
-          <Route path="/basicdetails" element={<BasicDetails/>} />
-          <Route path="/addrole" element={<AddRole/>} />
-          <Route path='/signup' element={<SignUp />}/>
+          <Route path="/employeeform" element={<EmployeeEducation />} />
+          <Route path="/basicdetails" element={<BasicDetails />} />
+          <Route path="/addrole" element={<AddRole />} />
+          <Route path="/adduser" element={<AddUser />} />
         </Route>
         <Route path="/" element={<SignIn />}></Route>
-        {/* <Route path ='/dashboard' element ={<DashboardContent/>}></Route> */}
-        
-
       </Routes>
     </div>
   );

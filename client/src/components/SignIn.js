@@ -13,7 +13,6 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
 import axios from "axios";
 import CustomSnackbar from "./CustomSnackbar";
-import SignInAlert from "./SignInAlert";
 
 const theme = createTheme();
 
@@ -24,23 +23,16 @@ export default function SignIn() {
   const [userPasswordError, setuserPasswordError] = useState(false);
   const [sopen, setSopen] = React.useState(false);
   const [smessage, setSmessage] = React.useState("");
-  const [serror, setSerror] = React.useState("");
+  const [serror, setSerror] = React.useState();
 
   let navigate = useNavigate();
 
-  // React.useEffect(() => {
-  //   userName.trim().length === 0
-  //     ? setuserNameError(true)
-  //     : setuserNameError(false);
-  // }, [userName]);
-
   const handleSclose = (event, reason) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
-
     setSopen(false);
-  }
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -67,24 +59,24 @@ export default function SignIn() {
       axios
         .post("http://localhost:8080/authenticate", data)
         .then((response) => {
-          if(response.data.jwtToken === "already loggged in"){
-            console.log("already loggged in")
-            setSopen(true)
-            setSerror("error")
-            setSmessage("User already logged in! Logout from previous session to login here")
+          if (response.data.jwtToken === "already loggged in") {
+            setSopen(true);
+            setSerror("error");
+            setSmessage(
+              "User already logged in! Logout from previous session to login here"
+            );
+          } else {
+            console.log(response.data)
+            localStorage.setItem(
+              "accessToken",
+              JSON.stringify("LoginToken " + response?.data?.jwtToken)
+            );
+            localStorage.setItem(
+              "username",
+              response.data.username
+            );
+            navigate("/datatable", { state: { roles: response.data.roles ,profile:response.data.profile} });
           }
-          else{
-          // if (response.status === 200) {
-          //console.log(response.data, " response");
-          localStorage.setItem(
-            "accessToken",
-            JSON.stringify("LoginToken " + response?.data?.jwtToken)
-          );
-          //console.log(response.data.roles);
-          navigate("/datatable", {state:{roles:response.data.roles}});
-          // }
-          }
-          
         })
         .catch((error) => {
           console.error(error);
@@ -94,103 +86,99 @@ export default function SignIn() {
 
   return (
     <>
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
-          >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="Username"
-              label="Username"
-              name="email"
-              autoComplete="Username"
-              value={userName}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setuserNameError(false);
-              }}
-              onBlur={(e) => {
-                if (!e.target.value) setuserNameError(true);
-              }}
-              autoFocus
-              error={userNameError}
-              helperText={"enter Username"}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="userPassword"
-              label="userPassword"
-              type="password"
-              id="userPassword"
-              value={userPassword}
-              onChange={(e) => {
-                setuserPassword(e.target.value);
-                setuserPasswordError(false);
-              }}
-              onBlur={(e) => {
-                if (!e.target.value) setuserPasswordError(true);
-              }}
-              autoComplete="current-userPassword"
-              error={userPasswordError}
-              helperText={"enter userPassword"}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link
-                  to="#"
-                  variant="body2"
-                  style={{ textDecoration: "none", fontWeight: "bold" }}
-                >
-                  Forgot userPassword?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link
-                  to="/signup"
-                  variant="body2"
-                  style={{ textDecoration: "none", fontWeight: "bold" }}
-                >
-                  SignUp here
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
         
-      </Container>
-    </ThemeProvider>
-    <CustomSnackbar message={smessage} severity={serror} sopen={sopen} onClose={handleSclose} />
+      <ThemeProvider theme={theme}>
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
+          <Box
+            sx={{
+              marginTop: 8,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign in
+            </Typography>
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              noValidate
+              sx={{ mt: 1 }}
+            >
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="Username"
+                label="Username"
+                name="email"
+                autoComplete="Username"
+                value={userName}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setuserNameError(false);
+                }}
+                onBlur={(e) => {
+                  if (!e.target.value) setuserNameError(true);
+                }}
+                autoFocus
+                error={userNameError}
+                helperText={"enter Username"}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="userPassword"
+                label="userPassword"
+                type="password"
+                id="userPassword"
+                value={userPassword}
+                onChange={(e) => {
+                  setuserPassword(e.target.value);
+                  setuserPasswordError(false);
+                }}
+                onBlur={(e) => {
+                  if (!e.target.value) setuserPasswordError(true);
+                }}
+                autoComplete="current-userPassword"
+                error={userPasswordError}
+                helperText={"enter userPassword"}
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign In
+              </Button>
+              <Grid container>
+                <Grid item xs>
+                  <Link
+                    to="#"
+                    variant="body2"
+                    style={{ textDecoration: "none", fontWeight: "bold" }}
+                  >
+                    Forgot userPassword?
+                  </Link>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        </Container>
+      </ThemeProvider>
+      <CustomSnackbar
+        message={smessage}
+        severity={serror}
+        sopen={sopen}
+        onClose={handleSclose}
+      />
     </>
   );
 }

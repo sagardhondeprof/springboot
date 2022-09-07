@@ -1,7 +1,18 @@
 import {
-  Box, Button, Checkbox, Container, FormControl,
-  FormControlLabel, FormGroup, FormLabel, Grid, Radio,
-  RadioGroup, TextField, Toolbar, Typography,
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+  Grid,
+  Radio,
+  RadioGroup,
+  TextField,
+  Toolbar,
+  Typography,
 } from "@mui/material";
 
 import React, { useEffect, useState } from "react";
@@ -45,10 +56,9 @@ export default function BasicDetails() {
   });
   const { trading, coding, design, reading } = hobbies;
 
-
   const uploadHandler = (e) => {
     setimage(URL.createObjectURL(e.target.files[0]));
-    setprofile_image(e.target.files[0])
+    setprofile_image(e.target.files[0]);
   };
 
   const dropHandler = (newValue) => {
@@ -61,7 +71,7 @@ export default function BasicDetails() {
     setFormData({ ...formData, dob: newValue.toISOString().slice(0, 10) });
   };
   const handleGenderChange = (event) => {
-    setFgender(event.target.value)
+    setFgender(event.target.value);
     setFormData({ ...formData, gender: event.target.value });
   };
 
@@ -74,17 +84,15 @@ export default function BasicDetails() {
   };
 
   const setfhobbies = () => {
-    console.log(hobbies)
     let keys = Object.keys(hobbies);
 
     let filtered = keys.filter(function (key) {
-      return hobbies[key]
+      return hobbies[key];
     });
-    setFormData({ ...formData, hobby: filtered.toString() })
-  }
+    setFormData({ ...formData, hobby: filtered.toString() });
+  };
 
   const onChange = (e) => {
-    console.log(e.target.id);
     const { value, id } = e.target;
     setFormData({ ...formData, [id]: value });
   };
@@ -92,23 +100,23 @@ export default function BasicDetails() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     let totaldata = new FormData();
-    totaldata.append('employeedata', JSON.stringify(formData));
-    totaldata.append('profile', profile_image)
-    for (var value of totaldata.values()) {
-      console.log(value);
-    }
+    totaldata.append("employeedata", JSON.stringify(formData));
+    totaldata.append("profile", profile_image);
     let lt = localStorage.getItem("accessToken");
     try {
       const response = await axios.post(ADD_BASIC_DETAILS, totaldata, {
         headers: {
-
-          Authorization: JSON.parse(lt)
-        }
-      })
-      console.log(response)
+          Authorization: JSON.parse(lt),
+        },
+      });
       setFormData(initialValues);
       setimage(null);
-      setHobbies({ trading: false, coding: false, design: false, reading: false, })
+      setHobbies({
+        trading: false,
+        coding: false,
+        design: false,
+        reading: false,
+      });
     } catch (e) {
       console.log(e);
     }
@@ -120,49 +128,52 @@ export default function BasicDetails() {
     try {
       const response = await axios.get(GET_BASIC_DETAILS + x, {
         headers: {
-          Authorization: JSON.parse(lt)
-        }
-      })
+          Authorization: JSON.parse(lt),
+        },
+      });
       if (response.status === 200) {
-        console.log(response.data)
-        setDate(response.data.dob)
-        setFormData({ ...formData, mobile: response.data.mobile, gender: response.data.gender })
-        setNation(response.data.country)
-        setFgender(response.data.gender)
-        const nat = options.filter(val => val.label === response.data.country)
-        setNation(nat[0])
-        const subhobby = response.data.hobby
-        if (subhobby.includes('trading')) {
-          setHobbies({ ...hobbies, trading: true })
+        setDate(response.data.dob);
+        setFormData({
+          ...formData,
+          mobile: response.data.mobile,
+          gender: response.data.gender,
+        });
+        setNation(response.data.country);
+        setFgender(response.data.gender);
+        const nat = options.filter(
+          (val) => val.label === response.data.country
+        );
+        setNation(nat[0]);
+        const subhobby = response.data.hobby;
+        if (subhobby.includes("trading")) {
+          setHobbies({ ...hobbies, trading: true });
         }
-        if (subhobby.includes('coding')) {
-          setHobbies({ ...hobbies, coding: true })
+        if (subhobby.includes("coding")) {
+          setHobbies({ ...hobbies, coding: true });
         }
-        if (subhobby.includes('design')) {
-          setHobbies({ ...hobbies, design: true })
+        if (subhobby.includes("design")) {
+          setHobbies({ ...hobbies, design: true });
         }
-        if (subhobby.includes('reading')) {
-          setHobbies({ ...hobbies, reading: true })
+        if (subhobby.includes("reading")) {
+          setHobbies({ ...hobbies, reading: true });
         }
-        setimage(`data:image/jpeg;base64,${response.data.profile}`)
+        setimage(`data:image/jpeg;base64,${response.data.profile}`);
       }
     } catch (error) {
-      if(error.response.status === 401){
+      if (error.response.status === 401) {
         navigate("/");
-      }
-      else{
-      console.log(error)
+      } else {
+        console.log(error);
       }
     }
-  }
+  };
 
   useEffect(() => {
     setroles(location.state.roles);
     setdata(location.state.data);
-    setFormData({ ...formData, empId: location.state.data.id })
+    setFormData({ ...formData, empId: location.state.data.id });
     getBasicDetails();
   }, []);
-
 
   return (
     <>

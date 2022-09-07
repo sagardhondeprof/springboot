@@ -1,17 +1,4 @@
-import {
-  Box,
-  Button,
-  Container,
-  CssBaseline,
-  FormControl,
-  Grid,
-  InputLabel,
-  Paper,
-  Select,
-  TextField,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { Box, Container, Grid, TextField, Toolbar } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -35,7 +22,7 @@ export default function EmployeeEducation() {
       >
         <Toolbar />
         <Container sx={{ display: "flex" }}>
-        <Box sx={{ mt: 8, ml: 4 }}>
+          <Box sx={{ mt: 8, ml: 4 }}>
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <TextField
@@ -77,10 +64,8 @@ export default function EmployeeEducation() {
                 ></TextField>
               </Grid>
             </Grid>
-          
-            
           </Box>
-          </Container>
+        </Container>
       </Box>
     </>
   );
