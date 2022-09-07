@@ -55,7 +55,7 @@ public class UserEntity extends AuditEntity {
 	byte[] profile;	
 
 	@OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH }, orphanRemoval = true, fetch = FetchType.EAGER)
+			CascadeType.REFRESH, CascadeType.REMOVE }, orphanRemoval = true, fetch = FetchType.EAGER)
 	private Set<AccessMappingEntity> roleMapping = new HashSet<>();
 
 	public UserEntity(String createdBy, LocalDateTime createdDate, String lastUpdatedBy, LocalDateTime lastUpdateDate,

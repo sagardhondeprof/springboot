@@ -56,6 +56,8 @@ public class JwtUtil implements Serializable {
 		Map<String, Object> claims = new HashMap<>();
 		String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
 				.collect(Collectors.joining(","));
+		
+		claims.put("roles", authorities);
 
 		return Jwts.builder().setClaims(claims).setSubject(authentication.getName())
 				.setIssuedAt(new Date(System.currentTimeMillis()))

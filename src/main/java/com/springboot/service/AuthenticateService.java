@@ -2,6 +2,8 @@
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +14,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -62,6 +65,10 @@ public class AuthenticateService implements UserDetailsService {
 		String token = jwtUtil.generateToken(authentication);
 		UserEntity authenticatedUser = userDao.findByUserName(userName);
 		
+		//UserDetails userDetails1 = loadUserByUsername(userName);
+		
+		
+		
 		AuthenticationResponsePOJO response = new AuthenticationResponsePOJO(token,
 				getRoles(authenticatedUser.getRoleMapping()));
 		if(!loginSession.getUsernameMap().containsKey(userName)) {
@@ -102,7 +109,7 @@ public class AuthenticateService implements UserDetailsService {
 		UserEntity user = userDao.findByUserName(username);
 		if (user != null) {
 			return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(),
-					new ArrayList<>());
+					getAuthorities(user));
 		}
 		/*
 		 * for first time use if (username.equals("xorpay")) { return new
@@ -116,6 +123,16 @@ public class AuthenticateService implements UserDetailsService {
 
 	public String[] getRoles(Set<AccessMappingEntity> role) {
 		return role.stream().map(mapper -> mapper.getRole().getRoleName()).toArray(String[]::new);
+	}
+	
+	private Set getAuthorities(UserEntity user) {
+		//List<> list = new ArrayList<>();
+		Set list1 = new HashSet<>();
+		user.getRoleMapping().forEach(role -> {
+			list1.add(new SimpleGrantedAuthority("ROLE_"+role.getRole().getRoleName()));
+		});
+		return list1;
+		
 	}
 	
 	public void blacklistToken(HttpServletRequest request) {

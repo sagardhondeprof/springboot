@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  server:
+    build: .
+    restart: always
+    ports: 
+      - 8080:8080
+    depends_on:
+      - mysqldb
+  mysqldb:
+    image: "mysql:5.7"
+    restart: always
+    ports:
+    - 3306:3306
+    environment:
+      MYSQL_DATABASE: springboot
+      MYSQL_USER: saurabh
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+      
+  client:
+    build: ./client/
+    restart: always
+    ports:
+      - 3000:80
+    depends_on:
+      - server
+    

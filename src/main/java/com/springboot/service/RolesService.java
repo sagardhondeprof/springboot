@@ -57,13 +57,13 @@ public class RolesService {
 				obj.setScreenDetailEntity(screen);
 				if(entry.getValue().contains("write")) {
 					if(entry.getValue().contains("true")) {
-						obj.setRead(true);
-						obj.setWrite(true);
+						obj.setAccessRead(false);
+						obj.setAccessWrite(false);
 					}
 				}
 				if(entry.getValue().contains("read")) {
 					if(entry.getValue().contains("true")) {
-						obj.setRead(true);
+						obj.setAccessRead(false);
 					}
 				}
 				list1.add(obj);

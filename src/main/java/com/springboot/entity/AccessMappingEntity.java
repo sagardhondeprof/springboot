@@ -17,7 +17,7 @@ import lombok.Setter;
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(name = "ACCESSMAPPING")
+@Table(name = "USER_ROLE_MAPPING")
 public class AccessMappingEntity {
 
 	@Id

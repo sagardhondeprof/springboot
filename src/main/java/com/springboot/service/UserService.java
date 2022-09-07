@@ -149,6 +149,10 @@ public class UserService {
 		});
 		return users;
 	}
+	
+	public UserEntity findByUserName(String userName) {
+		return userRepository.findByUserName(userName);
+	}
 
 	public String userName() {
 		return ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();

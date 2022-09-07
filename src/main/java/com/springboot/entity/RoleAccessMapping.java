@@ -28,10 +28,10 @@ public class RoleAccessMapping {
 	private long id;
 	
 	@Column 
-	private boolean read;
+	private boolean accessRead;
 	
 	@Column 
-	private boolean write;
+	private boolean accessWrite;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "role_id")
