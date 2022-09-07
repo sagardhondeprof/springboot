@@ -13,14 +13,19 @@ const UPDATE_USER_PROFILE =" http://localhost:8080/registration/uploadprofile"
 export default function Profile({profile}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [roles, setroles] = React.useState([]);
-  const [image, setimage] = React.useState("assets/profile.jpg");
+  const [image, setimage] = React.useState('./assets/profile.jpg');
 
   const open = Boolean(anchorEl);
   let location = useLocation();
 
   React.useEffect(() => {
     setroles(location.state.roles);
-    setimage(`data:image/jpeg;base64,${profile}`);
+    if(profile === "" || profile === null){
+    }
+    else{
+      setimage(`data:image/jpeg;base64,${profile}`);
+    }
+    
   }, [roles]);
 
   const handleClick = (event) => {
@@ -71,7 +76,7 @@ export default function Profile({profile}) {
       >
         <MenuItem>
           Logged In as: <br></br>
-          Sagar
+          {localStorage.getItem("username")}
         </MenuItem>
 
         <MenuItem>
