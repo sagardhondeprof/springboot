@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+//import com.springboot.configuration.RbacAuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity
@@ -23,12 +24,14 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private RbacAuthenticationEntryPoint authenticationEntryPoint;
+//	private RbacAuthenticationEntryPoint authenticationEntryPoint;
 
 	@Autowired
 	private UserDetailsService userDetailsService;
 
 	@Autowired
 	private RbacRequestFilter requestFilter;
+//	private RbacRequestFilter requestFilter;
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -54,7 +57,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		// We don't need CSRF for this example
 		httpSecurity.csrf().disable()
 				// dont authenticate this particular request
-				.authorizeRequests().antMatchers("/authenticate/**", "/h2-console/**").permitAll().
+				.authorizeRequests().antMatchers("/authenticate/**", "/h2-console/**","/","/static/**","/favicon.ico","/manifest.json","/**.png","/assets/**").permitAll().
 				// all other requests need to be authenticated
 				anyRequest().authenticated().and().
 				// make sure we use stateless session; session won't be used to

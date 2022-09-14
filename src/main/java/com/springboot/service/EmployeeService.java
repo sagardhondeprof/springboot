@@ -108,4 +108,8 @@ public class EmployeeService {
 		return empList;
 		
 	}
+	
+	public EmployeeService(EmployeeRepository employeeRepository) {
+		this.employeeRepo = employeeRepository;
+	}
 }

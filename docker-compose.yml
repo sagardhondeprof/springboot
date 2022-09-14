@@ -17,12 +17,4 @@ services:
       MYSQL_USER: saurabh
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: password
-      
-  client:
-    build: ./client/
-    restart: always
-    ports:
-      - 3000:80
-    depends_on:
-      - server
     
