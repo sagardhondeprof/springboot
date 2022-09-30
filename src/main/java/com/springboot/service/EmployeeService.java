@@ -3,6 +3,7 @@ package com.springboot.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +14,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.springboot.entity.EmployeeEntity;
+import com.springboot.entity.EmployeeSkills;
 import com.springboot.pojo.EmployeePOJO;
 import com.springboot.repository.EmployeeRepository;
+import com.springboot.repository.EmployeeSkillsRepository;
 
 @Service
 public class EmployeeService {
 
 	@Autowired
 	private EmployeeRepository employeeRepo;
+	
+	@Autowired 
+	private EmployeeSkillsRepository employeeSkillsRepository;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -38,6 +44,10 @@ public class EmployeeService {
 	}
 
 	public void deleteById(long id) {
+		Optional<EmployeeSkills> empskills = employeeSkillsRepository.findById(id);
+		if(empskills.isPresent()) {
+			employeeSkillsRepository.deleteById(id);
+		}
 		employeeRepo.deleteById(id);
 
 	}
