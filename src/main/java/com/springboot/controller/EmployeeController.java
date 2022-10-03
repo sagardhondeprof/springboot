@@ -39,6 +39,7 @@ import com.springboot.pojo.EmployeePOJO;
 import com.springboot.service.EmployeePersonalDetailsService;
 import com.springboot.service.EmployeeService;
 import com.springboot.util.EmployeePdfExporterUtil;
+import com.springboot.util.ExcelHelper;
 
 @RestController
 @RequestMapping()
@@ -167,7 +168,7 @@ public class EmployeeController {
 	}
 	
 	
-	@GetMapping(value = "getbasicdetails/{id}")
+	@GetMapping("getbasicdetails/{id}")
 	public ResponseEntity<?> getBasicDetails(@PathVariable("id") long id){
 		EmployeePersonalDetails emp = employeePersonalDetailsService.getBasicDetails(id);
 		if(emp != null)
@@ -175,5 +176,24 @@ public class EmployeeController {
 		else
 			return new ResponseEntity<>("Not Found", HttpStatus.NOT_FOUND);
 	}
+	
+	@PostMapping(value = "/importemployees")
+	public ResponseEntity<?> excelImportEmployees(@RequestParam("empExcel") MultipartFile empExcel) {
+		
+		if(ExcelHelper.checkExcelFormat(empExcel))
+		{
+			try {
+				employeeService.excelImportEmployees(empExcel.getInputStream());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return new ResponseEntity<>("importeddd", HttpStatus.OK);
+		}
+		else return new ResponseEntity<>("Not an excel file", HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+		
+	}
+	
+	
 	
 }

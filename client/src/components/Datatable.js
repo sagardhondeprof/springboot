@@ -18,6 +18,7 @@ import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import CustomExport from "./CustomExport";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import EmployeeActionsMenu from "./EmployeeActionsMenu";
+import ExcelImport from "./ExcelImport";
 
 const DATA_LIST_URL = "http://localhost:8080/";
 const ADD_DATA = "http://localhost:8080/addemployee";
@@ -251,7 +252,7 @@ export default function DataTable() {
     setrole(location.state?.roles);
   }, [role]);
 
-  const fetchData = async () => {
+   const fetchData = async () => {
     try {
       let lt = localStorage.getItem("accessToken");
       setIsLoading(true);
@@ -337,6 +338,7 @@ export default function DataTable() {
                 <Grid>
                   <Grid align="left" sx={{ mb: "-37px" }}>
                     <CustomExport page={page} />
+                    <ExcelImport fetchData={fetchData}></ExcelImport>
                   </Grid>
                   <Grid align="right">
                     <TextField

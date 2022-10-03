@@ -1,9 +1,22 @@
 package com.springboot.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFRow.CellIterator;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,9 +43,9 @@ public class EmployeeService {
 	}
 
 	public Page<EmployeePOJO> getpagelist(Pageable pageable) {
-		Page<EmployeeEntity> entitypage= employeeRepo.findAll(pageable);
+		Page<EmployeeEntity> entitypage = employeeRepo.findAll(pageable);
 		Page<EmployeePOJO> pojopage = pageMapTOpojo(entitypage);
-		
+
 		return pojopage;
 
 	}
@@ -72,9 +85,9 @@ public class EmployeeService {
 	private EmployeePOJO mapToPojo(EmployeeEntity user) {
 		return modelMapper.map(user, EmployeePOJO.class);
 	}
-	
-	private Page<EmployeePOJO> pageMapTOpojo(Page<EmployeeEntity> entitypage){
-		return entitypage.map(entityObject -> modelMapper.map(entityObject, EmployeePOJO.class));	
+
+	private Page<EmployeePOJO> pageMapTOpojo(Page<EmployeeEntity> entitypage) {
+		return entitypage.map(entityObject -> modelMapper.map(entityObject, EmployeePOJO.class));
 	}
 
 	public List<EmployeeEntity> searchEmployee(String searchterm) {
@@ -92,20 +105,86 @@ public class EmployeeService {
 		List<EmployeePOJO> pojolist = listMapTOpojo(list);
 		return pojolist;
 	}
-	
-	private List<EmployeePOJO> listMapTOpojo(List<EmployeeEntity> entitypage){
+
+	private List<EmployeePOJO> listMapTOpojo(List<EmployeeEntity> entitypage) {
 		List<EmployeePOJO> pojo = new ArrayList<>();
 		entitypage.forEach(emppojoobj -> pojo.add(modelMapper.map(emppojoobj, EmployeePOJO.class)));
 		return pojo;
 	}
+
 	public EmployeeEntity searchEmployeeById(long id) {
-		EmployeeEntity emp= employeeRepo.findById(id).get();
+		EmployeeEntity emp = employeeRepo.findById(id).get();
 		return emp;
-		
+
 	}
+
 	public List<EmployeeEntity> getAll() {
 		List<EmployeeEntity> empList = employeeRepo.findAll();
 		return empList;
-		
+
+	}
+
+	public void excelImportEmployees(InputStream excelFile) {
+
+		long ID;
+		String CREATED_BY = "sagar";
+		LocalDateTime CREATION_DATE = LocalDateTime.now();
+		LocalDateTime LAST_UPDATED_DATE = LocalDateTime.now();
+		String LAST_UPDATED_BY = "Sagar";
+		String FIRST_NAME = "";
+		String LAST_NAME = "";
+		String EMAIL = "";
+		LocalDate DATE_OF_BIRTH = null;
+
+		List<EmployeeEntity> employeeList = new ArrayList<EmployeeEntity>();
+//		String excelFilePath = "C:\\Users\\Sagar Dhonde\\Desktop\\employeesBulkData.xlsx";
+//
+//		InputStream inputStream;
+		try {
+//			inputStream = new FileInputStream(excelFilePath);
+			Workbook workbook = new XSSFWorkbook(excelFile);
+			Sheet firstSheet = workbook.getSheetAt(0);
+			java.util.Iterator<Row> rowIterator = firstSheet.iterator();
+			rowIterator.next();
+
+			while (rowIterator.hasNext()) {
+				Row nextRow = rowIterator.next();
+				Iterator<Cell> cellIterator = nextRow.cellIterator();
+
+				while (cellIterator.hasNext()) {
+					Cell nextCell = cellIterator.next();
+					int columnIndex = nextCell.getColumnIndex();
+					switch (columnIndex) {
+					case 0:
+						FIRST_NAME = nextCell.getStringCellValue();
+						break;
+					case 1:
+						LAST_NAME = nextCell.getStringCellValue();
+						break;
+					case 2:
+						EMAIL = nextCell.getStringCellValue();
+						break;
+					case 3:
+						DATE_OF_BIRTH = nextCell.getDateCellValue().toInstant().atZone(ZoneId.systemDefault())
+								.toLocalDate();
+						break;
+					case 4:
+						ID = (long) nextCell.getNumericCellValue();
+						break;
+
+					}
+
+				}
+				employeeList.add(new EmployeeEntity(CREATED_BY, CREATION_DATE, LAST_UPDATED_BY, LAST_UPDATED_DATE,
+						FIRST_NAME, LAST_NAME, EMAIL, DATE_OF_BIRTH));
+
+			}
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		employeeRepo.saveAll(employeeList);
+
 	}
 }
