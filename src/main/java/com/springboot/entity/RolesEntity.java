@@ -1,5 +1,6 @@
 package com.springboot.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,7 +25,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "ROLES")
-public class RolesEntity extends AuditEntity {
+public class RolesEntity extends AuditEntity implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

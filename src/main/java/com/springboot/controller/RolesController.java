@@ -1,6 +1,9 @@
 package com.springboot.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,7 +28,8 @@ public class RolesController {
 	private RolesService rolesService;
 
 	@PostMapping("addrole")
-	@PreAuthorize("hasPermission('','add_role')")
+//	@PreAuthorize("hasPermission('','add_role')")
+    
 	public ResponseEntity<?> add(@RequestBody RolesPOJO roles) {
 		
 		boolean isRoleAdded = rolesService.addroles(roles);
@@ -34,15 +38,19 @@ public class RolesController {
 		else return new ResponseEntity<>("Role alredy present!", HttpStatus.CONFLICT);
 	}
 	@GetMapping("getroles")
+    
 	public ResponseEntity<?> getRoles() {
+		
 		return new ResponseEntity<>(rolesService.getRoles(), HttpStatus.ACCEPTED);
 	}
 	@DeleteMapping("deleterole/{id}")
 	public ResponseEntity<?> deleteRole(@PathVariable("id") int id) {
+		
 		rolesService.deleteRole(id);
 		return new ResponseEntity<>("Role Deleted Successfully", HttpStatus.ACCEPTED);
 	}
 	@PutMapping("updaterole/{id}")
+   
 	public ResponseEntity<?> updateRole(@PathVariable("id") int id,@RequestBody RolesPOJO role) {
 		
 		return new ResponseEntity<>(rolesService.updateRole(id,role), HttpStatus.ACCEPTED);

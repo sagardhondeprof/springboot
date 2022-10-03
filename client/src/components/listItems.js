@@ -11,7 +11,7 @@ import SchoolIcon from "@mui/icons-material/School";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
-export default function Listitems1({ roles }) {
+export default function Listitems({ roles }) {
   let navigate = useNavigate();
 
   const [role, setrole] = React.useState([]);
